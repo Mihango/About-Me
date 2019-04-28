@@ -5,24 +5,38 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import kotlinx.android.synthetic.main.activity_main.*
+import androidx.databinding.DataBindingUtil
+import com.example.aboutme.databinding.ActivityMainBinding
+import com.example.aboutme.models.MyName
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
+    private val myName: MyName = MyName("Rhyan Mihango!")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        // setContentView(R.layout.activity_main)
 
-        done_button.setOnClickListener {
-            addNickName()
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(it.windowToken, 0)
+        binding= DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.myName = myName
+
+        binding.doneButton.setOnClickListener {
+            addNickName(it)
         }
     }
 
-    private fun addNickName() {
-        nickname_text.text = nickname_edit.text.toString()
-        nickname_edit.visibility = View.GONE
-        nickname_text.visibility = View.VISIBLE
+    private fun addNickName(view: View) {
+
+        binding.apply {
+            myName?.nickname = nicknameEdit.text.toString()
+            invalidateAll()
+            nicknameEdit.visibility = View.GONE
+            doneButton.visibility = View.GONE
+            nicknameText.visibility = View.VISIBLE
+        }
+
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
